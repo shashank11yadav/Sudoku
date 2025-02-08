@@ -35,7 +35,7 @@ Ensure you have a modern web browser to run the application.
    ```
 2. Navigate to the project directory:
    ```sh
-   cd sudoku-solver
+   cd sudoku
    ```
 3. Open `index.html` in a web browser.
 4. Click the **"Get New Puzzle"** button to fetch a Sudoku puzzle.
