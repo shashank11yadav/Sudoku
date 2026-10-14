@@ -149,6 +149,7 @@ export class PlayController {
         label: label(payload),
       });
       this.setGame(game);
+      if (game.kind !== 'custom') this.difficulty.value = game.kind;
       this.announcer.say(`New puzzle loaded: ${game.label}. ${81 - game.puzzle.filter((d) => d === 0).length} givens.`);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Could not load the puzzle.';
