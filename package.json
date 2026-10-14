@@ -1,0 +1,38 @@
+{
+  "name": "sudoku",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Playable Sudoku with a bitmask backtracking solver, a Dancing Links solver, a technique-based difficulty grader and a solver visualizer.",
+  "author": "Shashank Yadav",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite --port 5400 --strictPort",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 5401 --strictPort",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "bench": "tsx bench/run.ts",
+    "size": "node scripts/size.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.64.1",
+    "@types/node": "26.6.5",
+    "@vitest/coverage-v8": "5.0.4",
+    "eslint": "10.12.0",
+    "globals": "17.13.0",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.2",
+    "vite": "8.3.4",
+    "vitest": "5.0.4"
+  }
+}
