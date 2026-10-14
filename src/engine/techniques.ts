@@ -131,7 +131,7 @@ function combinations<T>(items: readonly T[], k: number): T[][] {
       return;
     }
     for (let i = start; i <= items.length - (k - pick.length); i++) {
-      pick.push(items[i] as T);
+      pick.push(items[i]);
       go(i + 1);
       pick.pop();
     }
@@ -155,7 +155,7 @@ function fullHouse(state: LogicState): Step | null {
   for (const unit of UNITS) {
     const empty = unit.cells.filter((c) => !state.values[c]);
     if (empty.length !== 1) continue;
-    const cell = empty[0] as number;
+    const cell = empty[0];
     const missing = 0x1ff & ~placedInUnit(state, unit);
     if (POPCOUNT[missing] !== 1 || (state.cands[cell] & missing) === 0) continue;
     const digit = firstDigit(missing);
@@ -193,7 +193,7 @@ function hiddenSingle(state: LogicState): Step | null {
       if (placed & bit(d)) continue;
       const spots = cellsWithDigit(state, unit, d);
       if (spots.length !== 1) continue;
-      const cell = spots[0] as number;
+      const cell = spots[0];
       return {
         technique: 'hidden-single',
         placements: [{ cell, digit: d }],
@@ -213,9 +213,9 @@ function pointing(state: LogicState): Step | null {
       if (spots.length < 2) continue;
       for (const lines of [ROWS, COLS]) {
         const key = lines === ROWS ? ROW : COL;
-        const first = spots[0] as number;
+        const first = spots[0];
         if (!spots.every((c) => key[c] === key[first])) continue;
-        const line = lines[key[first]] as Unit;
+        const line = lines[key[first]];
         const elims = line.cells
           .filter((c) => BOX[c] !== box.index && (state.cands[c] & bit(d)) !== 0)
           .map((cell) => ({ cell, digit: d }));
@@ -238,9 +238,9 @@ function claiming(state: LogicState): Step | null {
     for (let d = 1; d <= 9; d++) {
       const spots = cellsWithDigit(state, line, d);
       if (spots.length < 2) continue;
-      const first = spots[0] as number;
+      const first = spots[0];
       if (!spots.every((c) => BOX[c] === BOX[first])) continue;
-      const box = BOXES[BOX[first]] as Unit;
+      const box = BOXES[BOX[first]];
       const elims = box.cells
         .filter((c) => !line.cells.includes(c) && (state.cands[c] & bit(d)) !== 0)
         .map((cell) => ({ cell, digit: d }));
@@ -339,7 +339,7 @@ function fish(state: LogicState, size: 2 | 3): Step | null {
         for (const g of group) mask |= g.mask;
         if (POPCOUNT[mask] !== size) continue;
         const baseCells = new Set(group.flatMap((g) => g.unit.cells));
-        const coverUnits = DIGITS[mask].map((i) => covers[i - 1] as Unit);
+        const coverUnits = DIGITS[mask].map((i) => covers[i - 1]);
         const elims: Elimination[] = [];
         for (const cover of coverUnits) {
           for (const c of cover.cells) {
@@ -373,8 +373,8 @@ function xyWing(state: LogicState): Step | null {
     const wings = bivalue.filter((c) => sees(c, pivot) && POPCOUNT[state.cands[c] & pm] === 1);
     for (let i = 0; i < wings.length; i++) {
       for (let j = i + 1; j < wings.length; j++) {
-        const a = wings[i] as number;
-        const b = wings[j] as number;
+        const a = wings[i];
+        const b = wings[j];
         const am = state.cands[a];
         const bm = state.cands[b];
         // The wings must use different pivot digits and share a third digit z.
