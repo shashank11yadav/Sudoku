@@ -11,9 +11,9 @@
   },
   "scripts": {
     "dev": "vite --port 5400 --strictPort",
-    "build": "tsc --noEmit && vite build",
+    "build": "npm run typecheck && vite build",
     "preview": "vite preview --port 5401 --strictPort",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.engine.json",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",

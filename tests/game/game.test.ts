@@ -83,6 +83,17 @@ describe('Game', () => {
     expect(g.notes[0] & bit(4)).not.toBe(0);
   });
 
+  it('clears several cells as one move', () => {
+    const g = newGame();
+    g.setDigit(0, 4);
+    g.setDigit(1, 8);
+    g.clearCells([0, 1, 2]);
+    expect(g.values[0]).toBe(0);
+    expect(g.values[2]).toBe(3); // givens survive
+    g.undo();
+    expect([g.values[0], g.values[1]]).toEqual([4, 8]);
+  });
+
   it('reset clears every player entry', () => {
     const g = newGame();
     g.setDigit(0, 4);

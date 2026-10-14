@@ -130,6 +130,11 @@ export class Game {
     return this.commit([this.change(cell, 0, 0)]);
   }
 
+  /** Clears several cells as one undoable move. */
+  clearCells(cells: readonly number[]): boolean {
+    return this.commit(cells.filter((c) => !this.isGiven(c)).map((c) => this.change(c, 0, 0)));
+  }
+
   /** Fills every empty cell's notes with its current candidates. */
   fillNotes(): boolean {
     const cands = computeCandidates(this.values);
@@ -157,7 +162,7 @@ export class Game {
     const move = this.undoStack.pop();
     if (!move) return [];
     for (let i = move.length - 1; i >= 0; i--) {
-      const c = move[i] as CellChange;
+      const c = move[i];
       this.values[c.cell] = c.prevValue;
       this.notes[c.cell] = c.prevNotes;
     }

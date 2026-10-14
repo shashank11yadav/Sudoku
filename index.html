@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Sudoku with a bitmask backtracking solver, a Dancing Links solver, technique-based hints and a step-by-step solver visualizer." />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Sudoku</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="skip-link" href="#board">Skip to the board</a>
+    <header class="topbar">
+      <h1 class="brand">Sudoku</h1>
+      <div class="tabs" role="tablist" aria-label="Mode">
+        <button type="button" role="tab" id="tab-play" aria-controls="panel-play" aria-selected="true">Play</button>
+        <button type="button" role="tab" id="tab-watch" aria-controls="panel-watch" aria-selected="false" tabindex="-1">Watch the solver</button>
+      </div>
+      <button type="button" class="icon-button" id="theme-toggle" aria-label="Switch to dark theme">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z" /></svg>
+      </button>
+    </header>
+
+    <main>
+      <section id="panel-play" role="tabpanel" aria-labelledby="tab-play" class="panel">
+        <div class="play-layout">
+          <div class="board-column">
+            <div class="status-bar">
+              <span id="game-label" class="game-label">Loading</span>
+              <span class="timer-wrap">
+                <span class="visually-hidden">Elapsed time</span>
+                <span id="timer" role="timer" aria-live="off">0:00</span>
+              </span>
+            </div>
+            <div id="board" class="board" role="grid" aria-label="Sudoku board" aria-describedby="board-help" aria-busy="true" tabindex="-1"></div>
+            <p id="board-help" class="board-help">
+              Arrow keys move. Type 1 to 9 to fill a cell, Shift with a digit or N to toggle notes, Backspace to clear, Ctrl+Z to undo, H for a hint and H again to apply it.
+            </p>
+            <div id="hint-panel" class="hint-panel" hidden>
+              <p><strong id="hint-title"></strong> <span id="hint-text"></span></p>
+              <div class="hint-actions">
+                <button type="button" id="hint-apply" class="button primary">Apply</button>
+                <button type="button" id="hint-dismiss" class="button">Dismiss</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-column">
+            <div class="new-game">
+              <label for="difficulty">Difficulty</label>
+              <div class="row">
+                <select id="difficulty">
+                  <option value="easy">Easy</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="hard">Hard</option>
+                  <option value="expert">Expert</option>
+                </select>
+                <button type="button" id="new-game" class="button primary">New game</button>
+              </div>
+              <div class="row">
+                <button type="button" id="daily" class="button">Daily puzzle</button>
+                <button type="button" id="open-io" class="button">Import / export</button>
+              </div>
+            </div>
+
+            <div class="keypad" role="group" aria-label="Number pad">
+              <button type="button" class="key" data-digit="1">1</button>
+              <button type="button" class="key" data-digit="2">2</button>
+              <button type="button" class="key" data-digit="3">3</button>
+              <button type="button" class="key" data-digit="4">4</button>
+              <button type="button" class="key" data-digit="5">5</button>
+              <button type="button" class="key" data-digit="6">6</button>
+              <button type="button" class="key" data-digit="7">7</button>
+              <button type="button" class="key" data-digit="8">8</button>
+              <button type="button" class="key" data-digit="9">9</button>
+            </div>
+
+            <div class="tools" role="group" aria-label="Tools">
+              <button type="button" id="notes-toggle" class="button" aria-pressed="false">Notes</button>
+              <button type="button" id="erase" class="button">Erase</button>
+              <button type="button" id="undo" class="button">Undo</button>
+              <button type="button" id="redo" class="button">Redo</button>
+              <button type="button" id="hint" class="button">Hint</button>
+              <button type="button" id="check" class="button">Check</button>
+              <button type="button" id="auto-notes" class="button">Fill notes</button>
+              <button type="button" id="restart" class="button">Restart</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-watch" role="tabpanel" aria-labelledby="tab-watch" class="panel" hidden>
+        <div class="play-layout">
+          <div class="board-column">
+            <div class="status-bar">
+              <span id="viz-status" class="game-label">Ready</span>
+            </div>
+            <div id="viz-board" class="board viz" role="grid" aria-label="Solver board" aria-readonly="true" tabindex="-1"></div>
+            <p id="viz-explain" class="viz-explain" aria-live="polite"></p>
+          </div>
+          <div class="side-column">
+            <div class="field">
+              <label for="viz-source">Puzzle</label>
+              <select id="viz-source">
+                <option value="current">Current game</option>
+                <option value="inkala">Arto Inkala 2012</option>
+                <option value="easter">Easter Monster</option>
+                <option value="seventeen">17-clue puzzle</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="viz-algo">Algorithm</label>
+              <select id="viz-algo">
+                <option value="mrv">Backtracking, fewest candidates first (MRV)</option>
+                <option value="naive">Backtracking, cells in reading order</option>
+                <option value="logic">Human techniques</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="viz-speed">Speed: <output id="viz-speed-out" for="viz-speed">30 steps/s</output></label>
+              <input id="viz-speed" type="range" min="0" max="100" value="35" />
+            </div>
+            <div class="row">
+              <button type="button" id="viz-play" class="button primary">Play</button>
+              <button type="button" id="viz-step" class="button">Step</button>
+              <button type="button" id="viz-reset" class="button">Reset</button>
+            </div>
+            <dl class="counters">
+              <div><dt id="viz-nodes-label">Nodes visited</dt><dd id="viz-nodes">0</dd></div>
+              <div><dt>Backtracks</dt><dd id="viz-backtracks">0</dd></div>
+              <div><dt>Empty cells</dt><dd id="viz-empty">0</dd></div>
+            </dl>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>
+        Puzzles are generated in your browser. Source on
+        <a href="https://github.com/shashank11yadav/Sudoku" rel="noopener noreferrer">GitHub</a>.
+      </p>
+    </footer>
+
+    <div id="announcer" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
+    <div id="alert" class="visually-hidden" aria-live="assertive" aria-atomic="true"></div>
+
+    <dialog id="win-dialog" aria-labelledby="win-title" aria-describedby="win-text">
+      <h2 id="win-title">Solved</h2>
+      <p id="win-text"></p>
+      <div class="row">
+        <button type="button" id="win-new" class="button primary">New game</button>
+        <button type="button" id="win-close" class="button">Close</button>
+      </div>
+    </dialog>
+
+    <dialog id="io-dialog" aria-labelledby="io-title">
+      <h2 id="io-title">Import or export</h2>
+      <form id="io-form" method="dialog" novalidate>
+        <label for="io-input">Puzzle string</label>
+        <textarea id="io-input" rows="4" spellcheck="false" autocomplete="off" maxlength="1000" aria-describedby="io-help io-error"></textarea>
+        <p id="io-help" class="help">81 characters: 1 to 9 for givens, 0 or . for blanks. Line breaks and spaces are ignored.</p>
+        <p id="io-error" class="error" role="alert"></p>
+        <div class="row">
+          <button type="submit" id="io-load" class="button primary">Load puzzle</button>
+          <button type="button" id="io-copy-puzzle" class="button">Copy puzzle</button>
+          <button type="button" id="io-copy-board" class="button">Copy my board</button>
+          <button type="button" id="io-close" class="button">Close</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
