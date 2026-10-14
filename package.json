@@ -3,6 +3,21 @@
   "version": "2.0.0",
   "private": true,
   "description": "Playable Sudoku with a bitmask backtracking solver, a Dancing Links solver, a technique-based difficulty grader and a solver visualizer.",
+  "keywords": [
+    "sudoku",
+    "dancing-links",
+    "backtracking",
+    "puzzle-generator",
+    "typescript",
+    "vite",
+    "web-worker",
+    "accessibility"
+  ],
+  "homepage": "https://shashank11yadav.github.io/Sudoku/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shashank11yadav/Sudoku.git"
+  },
   "author": "Shashank Yadav",
   "license": "MIT",
   "type": "module",
