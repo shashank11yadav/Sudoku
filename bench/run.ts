@@ -17,12 +17,12 @@ const MAX_RUNS = 50;
 function median(xs: number[]): number {
   const s = [...xs].sort((a, b) => a - b);
   const mid = Math.floor(s.length / 2);
-  return s.length % 2 ? (s[mid] as number) : ((s[mid - 1] as number) + (s[mid] as number)) / 2;
+  return s.length % 2 ? (s[mid]) : ((s[mid - 1]) + (s[mid])) / 2;
 }
 
 function percentile(xs: number[], p: number): number {
   const s = [...xs].sort((a, b) => a - b);
-  return s[Math.min(s.length - 1, Math.ceil((p / 100) * s.length) - 1)] as number;
+  return s[Math.min(s.length - 1, Math.ceil((p / 100) * s.length) - 1)];
 }
 
 /** Runs fn until the time budget or run cap is used up, returning the median time and last result. */

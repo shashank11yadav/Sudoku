@@ -11,7 +11,7 @@ export default tseslint.config(
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },
       parserOptions: {
-        projectService: { allowDefaultProject: ['eslint.config.js'] },
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -30,7 +30,12 @@ export default tseslint.config(
     },
   },
   {
-    files: ['eslint.config.js'],
+    // The benchmark's whole job is to print a report.
+    files: ['bench/**/*.ts'],
+    rules: { 'no-console': 'off' },
+  },
+  {
+    files: ['**/*.js', '**/*.mjs'],
     ...tseslint.configs.disableTypeChecked,
   },
 );
