@@ -30,11 +30,6 @@ export default tseslint.config(
     },
   },
   {
-    // The benchmark's whole job is to print a report.
-    files: ['bench/**/*.ts'],
-    rules: { 'no-console': 'off' },
-  },
-  {
     files: ['**/*.js', '**/*.mjs'],
     ...tseslint.configs.disableTypeChecked,
   },

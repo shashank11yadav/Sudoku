@@ -57,21 +57,25 @@ function solveRow(f: Fixture, label: string): string {
   return `| ${f.name} | ${label} | ${fmtMs(naive.ms)} | ${fmtMs(mrv.ms)} | ${fmtMs(dlx.ms)} | ${fmtInt(naive.result.nodes)} | ${fmtInt(mrv.result.nodes)} | ${fmtInt(dlx.result.nodes)} | ${fmtMs(unique.ms)} |`;
 }
 
-const cpu = os.cpus()[0]?.model ?? 'unknown CPU';
-console.log(`Machine: ${cpu}, ${os.platform()} ${os.arch()}, Node ${process.version}\n`);
+function print(line: string): void {
+  process.stdout.write(`${line}\n`);
+}
 
-console.log('### Solving (median time, nodes = digit placements tried)\n');
-console.log('| Puzzle | Givens | Naive | MRV | DLX | Naive nodes | MRV nodes | DLX nodes | DLX uniqueness check |');
-console.log('|---|---|---|---|---|---|---|---|---|');
+const cpu = os.cpus()[0]?.model ?? 'unknown CPU';
+print(`Machine: ${cpu}, ${os.platform()} ${os.arch()}, Node ${process.version}\n`);
+
+print('### Solving (median time, nodes = digit placements tried)\n');
+print('| Puzzle | Givens | Naive | MRV | DLX | Naive nodes | MRV nodes | DLX nodes | DLX uniqueness check |');
+print('|---|---|---|---|---|---|---|---|---|');
 for (const f of [EASY, SEVENTEEN, AI_ESCARGOT, INKALA_2012, EASTER_MONSTER]) {
   const givens = parseGrid(f.puzzle).filter((d) => d !== 0).length;
-  console.log(solveRow(f, String(givens)));
+  print(solveRow(f, String(givens)));
 }
 
 const SEEDS = 20;
-console.log(`\n### Generating (${SEEDS} seeds per level, rotational symmetry)\n`);
-console.log('| Difficulty | Median | p95 | Max | Avg full grids tried | Avg givens | Grade matched |');
-console.log('|---|---|---|---|---|---|---|');
+print(`\n### Generating (${SEEDS} seeds per level, rotational symmetry)\n`);
+print('| Difficulty | Median | p95 | Max | Avg full grids tried | Avg givens | Grade matched |');
+print('|---|---|---|---|---|---|---|');
 for (const difficulty of DIFFICULTIES) {
   const times: number[] = [];
   let attempts = 0;
@@ -85,7 +89,7 @@ for (const difficulty of DIFFICULTIES) {
     givens += p.givens;
     if (p.matched) matched++;
   }
-  console.log(
+  print(
     `| ${difficulty} | ${fmtMs(median(times))} | ${fmtMs(percentile(times, 95))} | ${fmtMs(Math.max(...times))} | ${(attempts / SEEDS).toFixed(1)} | ${(givens / SEEDS).toFixed(1)} | ${matched}/${SEEDS} |`,
   );
 }

@@ -40,7 +40,6 @@ Thumbs.db
 *.swo
 
 # Local tool state
-.claude/
 .cache/
 .eslintcache
 .vite/
