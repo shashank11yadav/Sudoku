@@ -100,6 +100,7 @@ export class Visualizer {
   }
 
   pause(): void {
+    if (this.running && !this.finished) this.status.textContent = 'Paused';
     this.running = false;
     cancelAnimationFrame(this.frame);
     this.playBtn.textContent = 'Play';
