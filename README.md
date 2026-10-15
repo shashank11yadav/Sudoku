@@ -6,7 +6,7 @@ A Sudoku you can actually play, backed by an engine that generates graded puzzle
 
 ![The MRV backtracking solver working through Arto Inkala's 2012 puzzle](docs/solver.gif)
 
-**Live demo:** https://shashank11yadav.github.io/Sudoku/ (live once GitHub Pages is enabled for the repo)
+**Live demo:** https://shashank11yadav.github.io/Sudoku/
 
 ## Features
 
