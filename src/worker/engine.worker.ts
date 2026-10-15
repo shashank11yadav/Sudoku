@@ -9,7 +9,7 @@ import {
   solve,
   validateGivens,
 } from '../engine';
-import type { EngineResponse, EngineResults, Envelope, PuzzlePayload } from './protocol';
+import { isEnvelope, requestId, type EngineResponse, type EngineResults, type Envelope, type PuzzlePayload } from './protocol';
 
 /** Validates an imported puzzle string: format, duplicate givens, solvable, unique. */
 function loadPuzzle(input: string): PuzzlePayload {
@@ -39,12 +39,20 @@ function handle(msg: Envelope): EngineResults[keyof EngineResults] {
 }
 
 const scope = self as unknown as {
-  onmessage: ((event: MessageEvent<Envelope>) => void) | null;
+  onmessage: ((event: MessageEvent<unknown>) => void) | null;
   postMessage: (message: EngineResponse) => void;
 };
 
+// A dedicated worker only receives messages from the page that created it, and
+// event.origin is always empty here, so there is no origin to check. The payload
+// is validated instead.
 scope.onmessage = (event) => {
   const msg = event.data;
+  if (!isEnvelope(msg)) {
+    const id = requestId(msg);
+    if (id !== null) scope.postMessage({ id, ok: false, error: 'The puzzle engine received a malformed request.' });
+    return;
+  }
   let response: EngineResponse;
   try {
     response = { id: msg.id, ok: true, result: handle(msg) };
