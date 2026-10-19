@@ -43,10 +43,11 @@ const scope = self as unknown as {
   postMessage: (message: EngineResponse) => void;
 };
 
-// A dedicated worker only receives messages from the page that created it, and
-// event.origin is always empty here, so there is no origin to check. The payload
-// is validated instead.
+// A dedicated worker only receives messages from the page that created it, so
+// event.origin is empty (or, in some engines, the page's own origin). Anything
+// else is ignored, and the payload itself is validated below.
 scope.onmessage = (event) => {
+  if (event.origin !== '' && event.origin !== self.location.origin) return;
   const msg = event.data;
   if (!isEnvelope(msg)) {
     const id = requestId(msg);
