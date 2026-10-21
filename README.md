@@ -8,6 +8,8 @@ A Sudoku you can actually play, backed by an engine that generates graded puzzle
 
 **Live demo:** https://shashank11yadav.github.io/Sudoku/
 
+More of my projects: [shashankyadav.dev](https://www.shashankyadav.dev/#work)
+
 ## Features
 
 - Four difficulty levels, each graded by the hardest human technique a puzzle needs, plus a daily puzzle that is the same for everyone on a given date.
